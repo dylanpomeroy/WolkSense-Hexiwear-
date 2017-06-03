@@ -105,11 +105,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    @Click(R.id.signUp)
-    void openSignUpScreen() {
-        SignUpActivity_.intent(this).start();
-    }
-
     @Click(R.id.signInButton)
     @EditorAction(R.id.passwordField)
     void attemptSignIn() {
@@ -165,11 +160,6 @@ public class LoginActivity extends AppCompatActivity {
         signInElements.setVisibility(View.VISIBLE);
         signingInElements.setVisibility(View.GONE);
         dialog.showWarning(messageRes);
-    }
-
-    @Click
-    void resetPassword() {
-        ResetPasswordActivity_.intent(this).start();
     }
 
     private boolean validateCredentials() {

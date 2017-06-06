@@ -86,6 +86,10 @@ public class LoginActivity extends AppCompatActivity {
     @RestService
     AuthenticationService authenticationService;
 
+    public void onCreate(){
+        signIn();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -135,8 +139,8 @@ public class LoginActivity extends AppCompatActivity {
     @Background
     void signIn() {
         try {
-            final String emailAddress = emailField.getValue();
-            final String password = passwordField.getValue();
+            final String emailAddress = "elbert1212@gmail.com";
+            final String password = "thisisthegrouppassword";
 
             final AuthenticationResponseDto response = authenticationService.signIn(new SignInDto(emailAddress, password));
             credentials.username().put(response.getEmail());
@@ -149,14 +153,11 @@ public class LoginActivity extends AppCompatActivity {
         } catch (HttpStatusCodeException e) {
             Log.e(TAG, "signIn: ", e);
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                onSignInError(R.string.login_error_invalid_credentials);
                 return;
             }
 
-            onSignInError(R.string.login_error_general);
         } catch (Exception e) {
             Log.e(TAG, "signIn: ", e);
-            onSignInError(R.string.login_error_general);
         }
     }
 

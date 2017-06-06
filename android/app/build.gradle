@@ -100,5 +100,3 @@ apt {
         androidManifestFile variant.outputs[0].processResources.manifestFile
     }
 }
-
-apply plugin: 'com.google.gms.google-services'

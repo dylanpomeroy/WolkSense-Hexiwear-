@@ -62,77 +62,14 @@ public class LoginActivity extends AppCompatActivity {
     @ViewById
     Input passwordField;
 
-    @ViewById
-    View signInElements;
-
-    @ViewById
-    TextView signingInLabel;
-
-    @ViewById
-    View signingInElements;
-
-    @ViewById
-    Button signInButton;
-
     @Pref
     Credentials_ credentials;
-
-    @SystemService
-    InputMethodManager inputMethodManager;
-
-    @Bean
-    Dialog dialog;
 
     @RestService
     AuthenticationService authenticationService;
 
-    public void onCreate(){
-        signIn();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        String dataString = getIntent().getDataString();
-        Log.i(TAG, "Data string: " + dataString);
-        if (dataString != null && dataString.contains("activationCode=")) {
-            Log.i(TAG, "Activate");
-            verifyEmail(dataString.substring(dataString.indexOf('=') + 1));
-        }
-    }
-
-    @AfterViews
-    void startMainActivity() {
-        if (credentials.username().exists() && !credentials.username().get().equals("Demo")) {
-            MainActivity_.intent(this).start();
-            finish();
-        }
-    }
-
-    @Click(R.id.signUp)
-    void openSignUpScreen() {
-        SignUpActivity_.intent(this).start();
-    }
-
     @Click(R.id.signInButton)
-    @EditorAction(R.id.passwordField)
-    void attemptSignIn() {
-        if ("demo".equals(emailField.getValue()) && "demo".equals(passwordField.getValue())) {
-            credentials.username().put("Demo");
-            MainActivity_.intent(LoginActivity.this).start();
-            finish();
-            return;
-        }
-
-        if (!validateCredentials()) {
-            return;
-        }
-
-        inputMethodManager.hideSoftInputFromWindow(passwordField.getWindowToken(), 0);
-
-        signInElements.setVisibility(View.GONE);
-        signingInElements.setVisibility(View.VISIBLE);
-
+     void attemptSignIn(){
         signIn();
     }
 
@@ -160,48 +97,4 @@ public class LoginActivity extends AppCompatActivity {
             Log.e(TAG, "signIn: ", e);
         }
     }
-
-    @UiThread
-    void onSignInError(int messageRes) {
-        signInElements.setVisibility(View.VISIBLE);
-        signingInElements.setVisibility(View.GONE);
-        dialog.showWarning(messageRes);
-    }
-
-    @Click
-    void resetPassword() {
-        ResetPasswordActivity_.intent(this).start();
-    }
-
-    private boolean validateCredentials() {
-        if (emailField.isEmpty()) {
-            emailField.setError(R.string.registration_error_email_required);
-            return false;
-        }
-
-        if (passwordField.isEmpty()) {
-            passwordField.setError(R.string.registration_error_password_required);
-            return false;
-        }
-
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(emailField.getValue()).matches()) {
-            emailField.setError(R.string.registration_error_invalid_email);
-            return false;
-        }
-
-        return true;
-    }
-
-    @Background
-    void verifyEmail(String code) {
-        try {
-            Log.i(TAG, "Verifying email - code: " + code);
-            final EmailVerificationRequest request = new EmailVerificationRequest(code);
-            authenticationService.verifyEmail(request);
-            Toast.makeText(LoginActivity.this, "Email verified.", Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(LoginActivity.this, "Failed to verify email.", Toast.LENGTH_LONG).show();
-        }
-    }
-
 }
